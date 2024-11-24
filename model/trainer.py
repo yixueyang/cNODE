@@ -73,8 +73,7 @@ def _loss(cnode, z, p):
     return val # 返回损失值
 
 def loss(cnode, Z, P):
-    Z = np.array(Z)  # 如果 Z 是 list of numpy.ndarrays
-    P = np.array(P)
+    Z,P = np.array(Z), np.array(P)
     Z,P = torch.from_numpy(Z).to(dtype=cnode.layer.W.dtype),torch.from_numpy(P).to(dtype=cnode.layer.W.dtype)
     
     # 使用列表推导计算每个样本的损失，并取平均值
@@ -82,7 +81,7 @@ def loss(cnode, Z, P):
         Z = Z.view(Z.shape[0], 1)
     if len(P.shape) == 1:
         P = P.view(P.shape[0], 1) 
-    if(Z.shape[0]!=10 or Z.shape[0]!=100):
+    if(Z.shape[0]!=cnode.layer.W.shape[0]):
         Z =Z.T
         P =P.T      
     losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
@@ -156,5 +155,6 @@ def train_reptile(cnode,
                     break
         elif e>0:
             print(f"{e}---train={loss_train[-1]},test={loss_test[-1]}")        
+            
     return W, loss_train, loss_val, loss_test   
  
