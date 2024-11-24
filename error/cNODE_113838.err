@@ -1,0 +1,52 @@
+Traceback (most recent call last):
+  File "/home/liufei/yangyixue/cNODEPy/synthetic_data.py", line 56, in <module>
+    W, loss_train, loss_val, loss_test = trainer.train_reptile(
+                                         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 138, in train_reptile
+    stoping.append([loss(cnode,Ztrn[k,:],Ptrn[k,:]) for k in range(Ztrn.shape[0])])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 85, in loss
+    losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 66, in _loss
+    preds = predict(cnode,z)  # 获取模型预测值
+            ^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 94, in predict
+    conde = cnode(z)
+            ^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 56, in forward
+    p_dot = odeint(self.layer,p,torch.linspace(0, 1.0, 100))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/odeint.py", line 80, in odeint
+    solution = solver.integrate(t)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/solvers.py", line 32, in integrate
+    self._before_integrate(t)
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/rk_common.py", line 213, in _before_integrate
+    f0 = self.func(t[0], self.y0)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/misc.py", line 197, in forward
+    return self.base_func(t, y)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 40, in forward
+    f = torch.matmul(a, p) #10*10   10*1 = 10*1
+        ^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (10x10 and 1x1)
