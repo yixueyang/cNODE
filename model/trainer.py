@@ -82,8 +82,8 @@ def loss(cnode, Z, P):
     if len(P.shape) == 1:
         P = P.view(P.shape[0], 1) 
     if(Z.shape[0]!=cnode.layer.W.shape[0]):
-        Z =Z.T
-        P =P.T      
+            Z =Z.T
+            P =P.T      
     losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
     return torch.mean(losses)
 
