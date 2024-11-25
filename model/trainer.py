@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import random
-import copy
 from torchdiffeq import odeint
 import numpy as np
 
@@ -82,8 +81,8 @@ def loss(cnode, Z, P):
     if len(P.shape) == 1:
         P = P.view(P.shape[0], 1) 
     if(Z.shape[0]!=cnode.layer.W.shape[0]):
-            Z =Z.T
-            P =P.T      
+        Z =Z.T
+        P =P.T      
     losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
     return torch.mean(losses)
 
@@ -119,26 +118,34 @@ def train_reptile(cnode,
     stoping = []
     EarlyStoping = []
     es = 0
-
-    W =  cnode.layer.W.detach().numpy() #10*10
-    opt_in = torch.optim.Adam([cnode.layer.W],lr=LR[0])
-    opt_out = torch.optim.Adam([cnode.layer.W],lr=LR[1])
-    i=1
+    W = list(cnode.layer.parameters())
+   # W =  cnode.layer.W.detach().numpy() #10*10
+   # W = list( cnode.layer.W )
+    opt_in = torch.optim.Adam(W,lr=LR[0])
+    opt_out = torch.optim.Adam(W,lr=LR[1])
     for e in range(epochs):
-        V = copy.deepcopy(W)
+        print(f"权重更新前{W}") 
+        V= [v.clone().detach() for v in W] 
+        #V = copy.deepcopy(W)
         shuffled_data = shuffle_obs(Ztrn, Ptrn) #463组
         batchSize= each_batch(shuffled_data, mb)
         for z,p in batchSize:  #每次批传入五个数组
             opt_in.zero_grad()
             loss_value  = loss(cnode, z, p)
             loss_value.backward()
-            opt_in.step() #参数更新
-        newW = cnode.layer.W.detach().numpy()
-        V = V
-        for w, v in zip(newW, V):
-           dv = w - v  # 计算 w 和 v 的差
-           v = apply_opt_out(v, dv)  # 使用更新函数更新 v
-           w = v + dv  # 更新 w 为 v + dv 
+            opt_in.step() #内部优化参数更新
+        print(f"权重更新1{W}") 
+        a = zip(W[0], V[0])    
+        for w, v in zip(W[0], V[0]):
+           print(f"权重更新3{W}")
+           dv = w.data - v  # 计算 w 和 v 的差
+           v.grad = -dv
+          # v = apply_opt_out(v, dv)  # 使用更新函数更新 v
+           opt_out.step()  # 外部优化 opt_out 更新 v
+           print(v)
+           opt_out.zero_grad()
+           w.data = v.data + dv#更新 w 为 v + dv 
+           print(f"权重更新4{W}")   
         loss_train.append(loss(cnode, Ztrn, Ptrn))   
         loss_test.append(loss(cnode,Ztst,Ptst))   
         loss_val.append(loss(cnode, Zval,Pval))   
