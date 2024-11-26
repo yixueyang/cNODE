@@ -26,14 +26,14 @@ pars = synthetic_data[:3]
 ################################################################################
 #       2. HYPERPARAMETER SEARCH
 ################################################################################
-
+print("debugge1")
 LearningRates = [[0.01,0.01],[0.01,0.05],[0.01,0.1]]
 Minibatches = [5,10]
 # Parameters for run
-max_epochs = 1000
-early_stoping = 100
+max_epochs = 500#500
+early_stoping =20 #20
 report = 10
-
+print("debugge2")
 #超参数、参数和重复的迭代器
 
 inx = list(itertools.product(
@@ -64,11 +64,11 @@ for it in inx:
                                             )
     #Save
     result = f"/home/liufei/yangyixue/cNODEPy/data/synthetic/{N}/hyperparameters/" if setting.env_key else f"./results/synthetic/{N}/hyperparameters/"
-    if not os.path.exists(path):
-            os.makedirs(path)
-    np.savetxt(os.path.join(path, f"train_loss_{j}{k}_{rep}.csv"), loss_train[-1], delimiter=',') 
-    np.savetxt(os.path.join(path, f"val_loss_{j}{k}_{rep}.csv"), loss_val[-1], delimiter=',') 
-    np.savetxt(os.path.join(path, f"test_loss_{j}{k}_{rep}.csv"), loss_test[-1], delimiter=',') 
+    if not os.path.exists(result):
+            os.makedirs(result)
+    np.savetxt(os.path.join(result, f"train_loss_{j}{k}_{rep}.csv"), loss_train[-1], delimiter=',') 
+    np.savetxt(os.path.join(result, f"val_loss_{j}{k}_{rep}.csv"), loss_val[-1], delimiter=',') 
+    np.savetxt(os.path.join(result, f"test_loss_{j}{k}_{rep}.csv"), loss_test[-1], delimiter=',') 
               
 # ################################################################################
 # #       3. HYPERPARAMETER SELECTION

@@ -53,7 +53,7 @@ class NeuralODE(nn.Module):
         #p = p.to(dtype=torch.float64)
         if len(p.shape) == 1:
             p = p.view(p.shape[0], 1)
-        p_dot = odeint(self.layer,p,torch.linspace(0, 1.0, 100))
+        p_dot = odeint(self.layer,p,torch.linspace(0, 1.0, 20))
         return p_dot
 
 def getModel(N):
@@ -71,18 +71,18 @@ def _loss(cnode, z, p):
     val =  numerator / denominator
     return val # 返回损失值
 
-def loss(cnode, Z, P):
+def loss(cnode, Z, P,key):
     Z,P = np.array(Z), np.array(P)
     Z,P = torch.from_numpy(Z).to(dtype=cnode.layer.W.dtype),torch.from_numpy(P).to(dtype=cnode.layer.W.dtype)
-    
-    # 使用列表推导计算每个样本的损失，并取平均值
     if len(Z.shape) == 1:
-        Z = Z.view(Z.shape[0], 1)
+            Z = Z.view(Z.shape[0], 1)
     if len(P.shape) == 1:
-        P = P.view(P.shape[0], 1) 
-    if(Z.shape[0]!=cnode.layer.W.shape[0]):
-        Z =Z.T
-        P =P.T      
+        P = P.view(P.shape[0], 1)
+    # 使用列表推导计算每个样本的损失，并取平均值
+    if key != 'stopping':
+        if(Z.shape[0]!=cnode.layer.W.shape[0]):
+            Z =Z.T
+            P =P.T      
     losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
     return torch.mean(losses)
 
@@ -119,8 +119,6 @@ def train_reptile(cnode,
     EarlyStoping = []
     es = 0
     W = list(cnode.layer.parameters())
-   # W =  cnode.layer.W.detach().numpy() #10*10
-   # W = list( cnode.layer.W )
     opt_in = torch.optim.Adam(W,lr=LR[0])
     opt_out = torch.optim.Adam(W,lr=LR[1])
     for e in range(epochs):
@@ -131,36 +129,35 @@ def train_reptile(cnode,
         batchSize= each_batch(shuffled_data, mb)
         for z,p in batchSize:  #每次批传入五个数组
             opt_in.zero_grad()
-            loss_value  = loss(cnode, z, p)
+            loss_value  = loss(cnode, z, p,'other')
             loss_value.backward()
             opt_in.step() #内部优化参数更新
-        print(f"权重更新1{W}") 
-        a = zip(W[0], V[0])    
         for w, v in zip(W[0], V[0]):
-           print(f"权重更新3{W}")
            dv = w.data - v  # 计算 w 和 v 的差
            v.grad = -dv
-          # v = apply_opt_out(v, dv)  # 使用更新函数更新 v
            opt_out.step()  # 外部优化 opt_out 更新 v
-           print(v)
            opt_out.zero_grad()
            w.data = v.data + dv#更新 w 为 v + dv 
-           print(f"权重更新4{W}")   
-        loss_train.append(loss(cnode, Ztrn, Ptrn))   
-        loss_test.append(loss(cnode,Ztst,Ptst))   
-        loss_val.append(loss(cnode, Zval,Pval))   
-        stoping.append(loss(cnode,Ztrn,Ptrn))
-        print(f"循环次数：{e}")
+        print(f"Epoch {e }: 内层更新后权重 = {[w.data for w in W]}")
+        print(f"Epoch {e }: 外层更新后权重 = {[w.data for w in W]}")   
+        loss_train.append(loss(cnode, Ztrn, Ptrn,'other'))   
+        loss_test.append(loss(cnode,Ztst,Ptst,'other'))   
+        loss_val.append(loss(cnode, Zval,Pval,'other'))  
+        Ztrn_tran,Ptrn_tran =  Ztrn.T,Ptrn.T
+        stoping.append([loss(cnode,Ztrn_tran[:,k],Ptrn_tran[:,k],'stopping')  for k in range(Ptrn_tran.shape[1])])
         if e > early_stoping:
-            mean_value = torch.mean(stoping[-early_stoping:-1])  # 计算均值
-            comparison = mean_value <= stoping[-1]           # 与 stoping 的最后一个值比较
-            counts = int(comparison) / Ztrn.shape[1] 
+            stoping_tensor = torch.tensor(stoping)
+            mean_value = torch.mean(stoping_tensor[-early_stoping:-1])  # 计算均值
+            comparison = mean_value <= stoping_tensor[-1]     
+            a =  torch.sum(comparison).item()      # 与 stoping 的最后一个值比较
+            counts = a / Ztrn.shape[0] 
+            print(f"counts:{counts},comparison:{comparison}")
             if counts>0.5:
                 es +=1
-                if es>10:
+                if es>5:
                     print("Early stoping at $e...")
                     break
-        elif e>0:
+        if e>0:
             print(f"{e}---train={loss_train[-1]},test={loss_test[-1]}")        
             
     return W, loss_train, loss_val, loss_test   
