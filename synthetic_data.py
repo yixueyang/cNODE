@@ -30,7 +30,7 @@ print("debugge1")
 LearningRates = [[0.01,0.01],[0.01,0.05],[0.01,0.1]]
 Minibatches = [5,10]
 # Parameters for run
-max_epochs = 500#500
+max_epochs = 100#500
 early_stoping =20 #20
 report = 10
 print("debugge2")
@@ -66,9 +66,12 @@ for it in inx:
     result = f"/home/liufei/yangyixue/cNODEPy/data/synthetic/{N}/hyperparameters/" if setting.env_key else f"./results/synthetic/{N}/hyperparameters/"
     if not os.path.exists(result):
             os.makedirs(result)
-    np.savetxt(os.path.join(result, f"train_loss_{j}{k}_{rep}.csv"), loss_train[-1], delimiter=',') 
-    np.savetxt(os.path.join(result, f"val_loss_{j}{k}_{rep}.csv"), loss_val[-1], delimiter=',') 
-    np.savetxt(os.path.join(result, f"test_loss_{j}{k}_{rep}.csv"), loss_test[-1], delimiter=',') 
+    loss_train_numpy = loss_train[-1].detach().numpy().copy()        
+    loss_val_numpy = loss_val[-1].detach().numpy().copy()        
+    loss_test_numpy = loss_test[-1].detach().numpy().copy()        
+    np.savetxt(os.path.join(result, f"train_loss_{j}{k}_{rep}.csv"), loss_train_numpy, delimiter=',') 
+    np.savetxt(os.path.join(result, f"val_loss_{j}{k}_{rep}.csv"), loss_val_numpy, delimiter=',') 
+    np.savetxt(os.path.join(result, f"test_loss_{j}{k}_{rep}.csv"), loss_test_numpy, delimiter=',') 
               
 # ################################################################################
 # #       3. HYPERPARAMETER SELECTION

@@ -20,8 +20,8 @@ real_data = ["Drosophila_Gut","Soil_Vitro","Soil_Vivo","Human_Gut","Human_Oral",
 LearningRates = [[0.001,0.0025],[0.001,0.005],[0.001,0.01],[0.01,0.025],[0.01,0.05],[0.01,0.1]]
 Minibatches = [1,5,10]
 # Parameters for run
-max_epochs = 5 #1000
-early_stoping = 100
+max_epochs = 100 #1000
+early_stoping = 20
 report = 50
 inx = list(itertools.product(enumerate(LearningRates),enumerate(Minibatches)))[:]  
 #enumerate：生成包含索引即对应元素的数组，product计算两个枚举的笛卡尔积，collect[:]转成一维数组
@@ -30,11 +30,20 @@ pars = real_data[0:1]
 
 for (i,DATA) in enumerate(pars):
     path = f"/home/liufei/yangyixue/cNODEPy/data/real/{DATA}/P.csv" if setting.env_key else f"./data/real/{DATA}/P.csv" #5*26
-    #Z：训练集特征array([0.76621451, 0.        , 0.09351391, 0.14027158, 0.        ])  16*5
-    # P 训练集目标（标签）array([0.33333333, 0.        , 0.33333333, 0.33333333, 0.        ])16*5 
+   
     Z,P = loader.import_data(path,2/3) 
+    print(f"import_Z={Z}")
+    print(f"import_P={P}")
+    if not isinstance(Z, np.ndarray):
+       Z,P = np.array(Z),np.array(P)
+       print(f"arrayZ={Z}")
+       print(f"arrayP={P}")
     N = Z.shape[0] #获取矩阵z的行;5
     M = Z.shape[1] #获取矩阵z的列,16
+
+    print(f"Z={Z}")
+    print(f"P={P}")
+
     for it in inx:
         #j,k:学习率和Minibatches的索引;lr,mb学习率和Minibatches的值
         ((j,lr),(k,mb)) = it
@@ -43,6 +52,7 @@ for (i,DATA) in enumerate(pars):
         Ptst = np.zeros((M,N), dtype=np.float64)#创建5*26的数组，用于储存数据
         LossTrain = np.zeros(M, dtype=np.float64)
         LossTest = np.zeros(M, dtype=np.float64)
+        print(f"M={M};N={N}")
         #K折交叉验证
         kf = KFold(n_splits=M)
         kf_indices = []

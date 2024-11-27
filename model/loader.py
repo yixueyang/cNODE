@@ -9,7 +9,8 @@ def import_data(path,p):
 
   P = np.loadtxt(path, delimiter=',') #10*1023 原始样本矩阵
   Z = np.where(P > 0, 1, 0) #物种集合，样本存在z=1,不存在z=0
- 
+  print(f"old_Z={Z}")
+  print(f"old_Z={P}")
     # 根据索引对 P 和 Z 进行筛选
   reps = []
   for zz in Z.T:  # Z.T 转置矩阵以便按列遍历
@@ -25,6 +26,8 @@ def import_data(path,p):
 
   if p < 1.0:
       Z_train, Z_test, P_train, P_test= train_test_split(Z.T,P.T, test_size=1-p, shuffle=True)
+      print(f"Z_train={Z_train.T}")
+      print(f"P_train={P_train.T}")
       return Z_train.T, P_train.T
   return Z, P
 #p:1,q:0.8

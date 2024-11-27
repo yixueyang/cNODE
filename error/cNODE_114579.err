@@ -1,0 +1,6 @@
+sed: can't read run.slurm: No such file or directory
+Traceback (most recent call last):
+  File "/home/liufei/yangyixue/cNODEPy/real_data_cnode.py", line 36, in <module>
+    N = Z.shape[0] #获取矩阵z的行;5
+        ^^^^^^^
+AttributeError: 'tuple' object has no attribute 'shape'

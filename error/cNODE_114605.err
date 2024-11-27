@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/liufei/yangyixue/cNODEPy/real_data_cnode.py", line 56, in <module>
+    kf = KFold(n_splits=M)
+         ^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/sklearn/model_selection/_split.py", line 480, in __init__
+    super().__init__(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/sklearn/model_selection/_split.py", line 321, in __init__
+    raise ValueError(
+ValueError: k-fold cross-validation requires at least one train/test split by setting n_splits=2 or more, got n_splits=1.
