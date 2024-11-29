@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/liufei/yangyixue/cNODEPy/synthetic_data.py", line 21, in <module>
+    generate.generate_data(N,M,repetitions,vals,pars)
+  File "/home/liufei/yangyixue/cNODEPy/model/generate.py", line 143, in generate_data
+    A = getRewiredNetwork(Aa,ρ)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/generate.py", line 86, in getRewiredNetwork
+    possibletargets = set(range(1, N+1)) - alreadyconnected
+                      ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'set' and 'int'

@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "/home/liufei/yangyixue/cNODEPy/real_data_cnode.py", line 74, in <module>
+    W, loss_train, loss_val, loss_test = trainer.train_reptile(
+                                         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 132, in train_reptile
+    loss_value  = loss(cnode, z, p,'other')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 86, in loss
+    losses = torch.stack([_loss(cnode, Z[:, i], P[:, i]) for i in range(Z.shape[1])])
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 68, in _loss
+    preds = predict(cnode,z)  # 获取模型预测值
+            ^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 100, in predict
+    conde = cnode(z)
+            ^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/yangyixue/cNODEPy/model/trainer.py", line 56, in forward
+    p_dot = odeint(self.layer,p,torch.linspace(0, 1.0, 20))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/odeint.py", line 80, in odeint
+    solution = solver.integrate(t)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/solvers.py", line 34, in integrate
+    solution[i] = self._advance(t[i])
+                  ^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/rk_common.py", line 246, in _advance
+    self.rk_state = self._adaptive_step(self.rk_state)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/liufei/anaconda3/envs/torch/lib/python3.12/site-packages/torchdiffeq/_impl/rk_common.py", line 284, in _adaptive_step
+    assert t0 + dt > t0, 'underflow in dt {}'.format(dt.item())
+           ^^^^^^^^^^^^
+AssertionError: underflow in dt 0.0

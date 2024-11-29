@@ -18,9 +18,9 @@ def import_data(path,p):
     if indices not in reps:
         reps.append(indices)
   # 去重 reps 列表中的集合
-  inx = [random.choice(list(r)) for r in reps]          
-  P = P[:, inx]  #10*580 
-  Z = Z[:, inx]  #10*580      
+  # inx = [random.choice(list(r)) for r in reps]          
+  # P = P[:, inx]  
+  # Z = Z[:, inx]     
   P = normalize(P, axis=0, norm='l1')  # l1 归一化每一列 
   Z = normalize(Z, axis=0, norm='l1')  # l1 归一化每一列
 

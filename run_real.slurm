@@ -3,7 +3,7 @@
 #SBATCH --output=cNODE_%j.out
 #SBATCH --error=cNODE_%j.err
 #SBATCH --partition=old_40  
-#SBATCH --nodelist=cu03
+#SBATCH --nodelist=cu02
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 

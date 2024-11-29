@@ -83,7 +83,7 @@ def getRewiredNetwork(A,p):
         indices = np.where(condition)[0] #返回稀疏矩阵中所有非零值的索引
         for i in indices:
            alreadyconnected = rows[cols == cols[i]]
-           possibletargets = set(range(1, N+1)) - alreadyconnected
+           possibletargets = range(1, N+1) - alreadyconnected
            if len(possibletargets) >= 1:
               rows[i] = random.choice(possibletargets)
     sparse_matrix = coo_matrix((s, (rows, cols)), shape=(N, N))
@@ -112,6 +112,7 @@ def generate_data (N,M,repetitions,values,params):
          #验证robustness
          # Changing parameters
          rep,p = i
+         par = "Rewiring"
          if par == "Strength":
             σ,c,η,ϵ,ρ = S[p],C[0],0,0,0.
          elif par == "Connectivity":

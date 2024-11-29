@@ -5,8 +5,6 @@ import numpy as np
 import setting
 import pandas as pd
  
-
-num_workers = 4
 ################################################################################
 #       1. DATA GENERATION
 ################################################################################
@@ -17,31 +15,27 @@ N = 10                  # number of species 物种数量 10
 M = (2**N)-1             # number of communities 种群数量
 #强度、连通性、普性适、噪声、重组
 synthetic_data = ["Strength","Connectivity","Universality","Noise","Rewiring"]
-pars = synthetic_data[:3]
+pars = synthetic_data[:5]
 # Generate GLV data 
 # 参数：参与竞争的物种数量；种群个数；生态网络数；扫描参数值的个数 ；参数
-#generate.generate_data(N,M,repetitions,vals,pars)
+generate.generate_data(N,M,repetitions,vals,pars)
 #print("结束1")
 
 ################################################################################
 #       2. HYPERPARAMETER SEARCH
 ################################################################################
-print("debugge1")
 LearningRates = [[0.01,0.01],[0.01,0.05],[0.01,0.1]]
 Minibatches = [5,10]
 # Parameters for run
-max_epochs = 100#500
-early_stoping =20 #20
+max_epochs = 100#1000
+early_stoping =20 #100
 report = 10
-print("debugge2")
 #超参数、参数和重复的迭代器
-
 inx = list(itertools.product(
     enumerate(LearningRates), 
     enumerate(Minibatches), 
     range(repetitions)
 ))
-#enumerate：生成包含索引即对应元素的数组，product计算两个枚举的笛卡尔积，collect[:]转成一维数组
 v = 0
 DATA = synthetic_data[0]
 # 使用低强度值Strength
@@ -65,7 +59,7 @@ for it in inx:
     #Save
     result = f"/home/liufei/yangyixue/cNODEPy/data/synthetic/{N}/hyperparameters/" if setting.env_key else f"./results/synthetic/{N}/hyperparameters/"
     if not os.path.exists(result):
-            os.makedirs(result)
+        os.makedirs(result)
     loss_train_numpy = loss_train[-1].detach().numpy().copy()        
     loss_val_numpy = loss_val[-1].detach().numpy().copy()        
     loss_test_numpy = loss_test[-1].detach().numpy().copy()        
